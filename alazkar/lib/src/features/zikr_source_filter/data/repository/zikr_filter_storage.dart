@@ -45,6 +45,20 @@ class ZikrFilterStorage {
     return box.write(_enableHokmFiltersKey, activateFilters);
   }
 
+  static const String _showOnlyWithFadlKey =
+      "${_filterPrefixNameKey}showOnlyWithFadl";
+
+  /// Filters for zikr Fadl
+  bool getShowOnlyWithFadlStatus() {
+    final bool? data = box.read(_showOnlyWithFadlKey);
+    return data ?? false;
+  }
+
+  /// Filters for zikr Fadl
+  Future setShowOnlyWithFadlStatus(bool activateFilters) {
+    return box.write(_showOnlyWithFadlKey, activateFilters);
+  }
+
   bool getFilterStatus(ZikrFilter zikrFilter) {
     final bool? data = box.read(_getZikrFilterKey(zikrFilter));
     return data ?? true;

@@ -1,6 +1,7 @@
 import 'package:alazkar/src/features/about/presentation/screens/about_screen.dart';
 import 'package:alazkar/src/features/settings/presentation/components/praise_with_volume_switch.dart';
 import 'package:alazkar/src/features/settings/presentation/components/settings_group_title.dart';
+import 'package:alazkar/src/features/settings/presentation/components/show_only_with_fadl_switch.dart';
 import 'package:alazkar/src/features/settings/presentation/components/show_text_in_bracket_switch.dart';
 import 'package:alazkar/src/features/theme/presentation/screens/theme_screen.dart';
 import 'package:alazkar/src/features/zikr_source_filter/presentation/screens/select_zikr_hokm_screen.dart';
@@ -38,6 +39,7 @@ class SettingsScreen extends StatelessWidget {
           const PraiseWithVolumeSwitch(),
           const Divider(),
           const SettingsGroupTitle(title: "تصفية الأذكار"),
+          const ShowOnlyWithFadlSwitch(),
           ListTile(
             leading: const Icon(Icons.library_books),
             title: const Text("اختيار مصدر الأذكار"),

@@ -8,8 +8,10 @@ extension FilterListExt on List<Filter> {
   List<Zikr> getFilteredZikr(List<Zikr> azkar) {
     final filterBySource = sl<ZikrFilterStorage>().getEnableFiltersStatus();
     final filterByHokm = sl<ZikrFilterStorage>().getEnableHokmFiltersStatus();
+    final showOnlyWithFadl =
+        sl<ZikrFilterStorage>().getShowOnlyWithFadlStatus();
 
-    if (!filterBySource && !filterByHokm) {
+    if (!filterBySource && !filterByHokm && !showOnlyWithFadl) {
       return azkar;
     }
 
@@ -20,6 +22,11 @@ extension FilterListExt on List<Filter> {
       if (filterByHokm && !validateHokm(zikr.hokm)) {
         return false;
       }
+
+      if (showOnlyWithFadl && zikr.fadl.isEmpty) {
+        return false;
+      }
+
       return true;
     }).toList();
   }

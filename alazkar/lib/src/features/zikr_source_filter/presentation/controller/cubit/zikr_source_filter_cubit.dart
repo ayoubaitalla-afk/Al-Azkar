@@ -13,6 +13,7 @@ class ZikrSourceFilterCubit extends Cubit<ZikrSourceFilterState> {
             filters: [],
             enableFilters: false,
             enableHokmFilters: false,
+            showOnlyWithFadl: false,
           ),
         );
 
@@ -24,6 +25,7 @@ class ZikrSourceFilterCubit extends Cubit<ZikrSourceFilterState> {
         filters: filters,
         enableFilters: zikrFilterStorage.getEnableFiltersStatus(),
         enableHokmFilters: zikrFilterStorage.getEnableHokmFiltersStatus(),
+        showOnlyWithFadl: zikrFilterStorage.getShowOnlyWithFadlStatus(),
       ),
     );
   }
@@ -50,5 +52,11 @@ class ZikrSourceFilterCubit extends Cubit<ZikrSourceFilterState> {
     }).toList();
 
     emit(state.copyWith(filters: newList));
+  }
+
+  Future toggleShowOnlyWithFadl(bool showOnlyWithFadl) async {
+    zikrFilterStorage.setShowOnlyWithFadlStatus(showOnlyWithFadl);
+
+    emit(state.copyWith(showOnlyWithFadl: showOnlyWithFadl));
   }
 }
