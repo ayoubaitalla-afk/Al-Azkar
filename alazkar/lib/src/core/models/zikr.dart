@@ -13,6 +13,7 @@ class Zikr extends Equatable {
   final String hokm;
   final int count;
   final String search;
+  final String sourceIndex;
   const Zikr({
     required this.id,
     required this.titleId,
@@ -23,6 +24,7 @@ class Zikr extends Equatable {
     required this.hokm,
     required this.count,
     required this.search,
+    required this.sourceIndex,
   });
 
   Map<String, dynamic> toMap() {
@@ -36,6 +38,7 @@ class Zikr extends Equatable {
       'hokm': hokm,
       'count': count,
       'search': search,
+      'sourceIndex': sourceIndex,
     };
   }
 
@@ -50,6 +53,7 @@ class Zikr extends Equatable {
       fadl: (map['fadl'] as String?) ?? "",
       hokm: map['hokm'] as String,
       count: map['count'] as int,
+      sourceIndex: (map['sourceIndex'] as String?) ?? "",
     );
   }
 
@@ -68,6 +72,7 @@ class Zikr extends Equatable {
     String? hokm,
     int? count,
     String? search,
+    String? sourceIndex,
   }) {
     return Zikr(
       id: id ?? this.id,
@@ -79,10 +84,21 @@ class Zikr extends Equatable {
       hokm: hokm ?? this.hokm,
       count: count ?? this.count,
       search: search ?? this.search,
+      sourceIndex: sourceIndex ?? this.sourceIndex,
     );
   }
 
   @override
-  List<Object> get props =>
-      [id, titleId, order, body, source, fadl, hokm, count, search];
+  List<Object> get props => [
+        id,
+        titleId,
+        order,
+        body,
+        source,
+        fadl,
+        hokm,
+        count,
+        search,
+        sourceIndex
+      ];
 }

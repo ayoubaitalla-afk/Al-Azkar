@@ -22,7 +22,8 @@ class ZikrItemCard extends StatelessWidget {
       },
       onLongPress: () {
         final SnackBar snackBar = SnackBar(
-          content: Text("الحكم: ${zikr.hokm}\n\nالمصدر:\n${zikr.source}"),
+          content: Text(
+              "الحكم: ${zikr.hokm}\n\nالمصدر:\n${zikr.source}\n\nرقم الذكر في المصدر:\n${zikr.sourceIndex}"),
         );
         ScaffoldMessenger.of(context).showSnackBar(
           snackBar,

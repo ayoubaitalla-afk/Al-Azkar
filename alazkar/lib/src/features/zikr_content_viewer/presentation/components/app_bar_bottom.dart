@@ -77,7 +77,32 @@ class ZikrContentViewerAppBarBottom extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (state.activeZikr!.hokm.isNotEmpty) ...[
+                            Text(
+                              "الحكم",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              state.activeZikr!.hokm,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    height: 1.5,
+                                  ),
+                            ),
+                          ],
                           if (state.activeZikr!.source.isNotEmpty) ...[
+                            const Divider(height: 32),
                             Text(
                               "المصدر",
                               style: Theme.of(context)
@@ -101,10 +126,10 @@ class ZikrContentViewerAppBarBottom extends StatelessWidget {
                                   ),
                             ),
                           ],
-                          if (state.activeZikr!.hokm.isNotEmpty) ...[
+                          if (state.activeZikr!.sourceIndex.isNotEmpty) ...[
                             const Divider(height: 32),
                             Text(
-                              "الحكم",
+                              "رقم الذكر في المصدر",
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium
@@ -116,7 +141,7 @@ class ZikrContentViewerAppBarBottom extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              state.activeZikr!.hokm,
+                              state.activeZikr!.sourceIndex,
                               textAlign: TextAlign.center,
                               style: Theme.of(context)
                                   .textTheme
