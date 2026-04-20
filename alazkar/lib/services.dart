@@ -1,5 +1,6 @@
 import 'package:alazkar/src/core/constants/const.dart';
-import 'package:alazkar/src/core/di/dependency_injection.dart' as service_locator;
+import 'package:alazkar/src/core/di/dependency_injection.dart'
+    as service_locator;
 import 'package:alazkar/src/core/di/dependency_injection.dart';
 import 'package:alazkar/src/core/extension/extension_platform.dart';
 import 'package:alazkar/src/core/helpers/azkar_helper.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -22,6 +24,8 @@ Future initServices() async {
   service_locator.initSL();
 
   phoneDeviceBars();
+  final packageInfo = await PackageInfo.fromPlatform();
+  kAppVersion = "${packageInfo.version} (${packageInfo.buildNumber})";
 
   if (PlatformExtension.isDesktopOrWeb) {
     sqfliteFfiInit();

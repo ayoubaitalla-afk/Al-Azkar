@@ -1,18 +1,6 @@
 import 'package:alazkar/src/core/extension/extension_platform.dart';
 
-final String appVersion = [
-  "1.1.01",
-  "1.0.0",
-  "0.9.0",
-  "0.8.0",
-  "0.7.0",
-  "0.6.0",
-  "0.5.0",
-  "0.4.0",
-  "0.3.0",
-  "0.2.0",
-  "0.1.0",
-].first;
+late final String kAppVersion;
 
 const String kEstaaza =
     "أَعُوذُ بِاللَّهِ (السَّمِيعِ الْعَلِيمِ) مِنَ الشَّيْطَانِ الرَّجِيمِ (مِنْ هَمْزِهِ وَنَفْخِهِ وَنَفْثِهِ)";
@@ -35,7 +23,8 @@ const Iterable<int> kArabicDiacriticsChar = [
   1618,
 ];
 
-String kGetStorageName = PlatformExtension.isDesktop ? "alazkar_storage" : "GetStorage";
+String kGetStorageName =
+    PlatformExtension.isDesktop ? "alazkar_storage" : "GetStorage";
 
 const double kFontChangeBy = 2;
 const double kFontDefault = 30;

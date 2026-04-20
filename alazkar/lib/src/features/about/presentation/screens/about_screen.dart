@@ -37,7 +37,7 @@ class AboutScreen extends StatelessWidget {
             leading: Image.asset(
               "assets/icons/app.png",
             ),
-            title: Text("تطبيق الأذكار النووية الإصدار $appVersion"),
+            title: Text("تطبيق الأذكار النووية الإصدار $kAppVersion"),
             subtitle: const Text("تطبيق مجاني خالي من الإعلانات ومفتوح المصدر"),
           ),
           const Divider(),

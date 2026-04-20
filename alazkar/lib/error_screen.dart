@@ -12,7 +12,7 @@ class ErrorScreen extends StatelessWidget {
   });
 
   Future<void> _sendEmail(BuildContext context, String errorMessage) async {
-    final String subject = 'الأذكار النووية | خلل في الأداء | $appVersion';
+    final String subject = 'الأذكار النووية | خلل في الأداء | $kAppVersion';
     final String body = 'حدث الخطأ التالي:\n\n$errorMessage\n\n';
     final Uri emailUri = Uri(
       scheme: 'mailto',
