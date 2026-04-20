@@ -32,8 +32,26 @@ class ZikrContentViewerAppBarBottom extends StatelessWidget {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
+                    icon: Icon(
+                      Icons.emoji_events_rounded,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: const Text("فضل الذكر"),
-                    content: Text(state.activeZikr!.fadl),
+                    content: SingleChildScrollView(
+                      child: Text(
+                        state.activeZikr!.fadl,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              height: 1.6,
+                            ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("إغلاق"),
+                      ),
+                    ],
                   );
                 },
               );
@@ -50,10 +68,73 @@ class ZikrContentViewerAppBarBottom extends StatelessWidget {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    // title: const Text("مصدر الذكر وحكمه"),
-                    content: Text(
-                      "المصدر:\n${state.activeZikr!.source}\n\nالحكم: ${state.activeZikr!.hokm}",
+                    icon: Icon(
+                      Icons.menu_book_rounded,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
+                    title: const Text("مصدر الذكر وحكمه"),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (state.activeZikr!.source.isNotEmpty) ...[
+                            Text(
+                              "المصدر",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              state.activeZikr!.source,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    height: 1.5,
+                                  ),
+                            ),
+                          ],
+                          if (state.activeZikr!.hokm.isNotEmpty) ...[
+                            const Divider(height: 32),
+                            Text(
+                              "الحكم",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              state.activeZikr!.hokm,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    height: 1.5,
+                                  ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("إغلاق"),
+                      ),
+                    ],
                   );
                 },
               );
