@@ -1,9 +1,11 @@
 import 'package:alazkar/src/core/di/dependency_injection.dart';
 import 'package:alazkar/src/core/extension/extension_platform.dart';
+import 'package:alazkar/src/core/storage/kv_storage.dart';
 import 'package:alazkar/src/core/widgets/loading.dart';
 import 'package:alazkar/src/features/home/presentation/components/bookmark_title_button.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/app_bar_bottom.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/bottom_app_bar.dart';
+import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/shake_tutorial_dialog.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/zikr_item_card.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/zikr_report_dialog.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/controller/bloc/zikr_content_viewer_bloc.dart';
@@ -56,6 +58,10 @@ class _ZikrContentViewerScreenState extends State<ZikrContentViewerScreen> {
           _showReportDialog();
         },
       );
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showShakeTutorialIfNeeded();
+      });
     }
   }
 
@@ -64,6 +70,21 @@ class _ZikrContentViewerScreenState extends State<ZikrContentViewerScreen> {
     _shakeDetector?.stopListening();
     _bloc.close();
     super.dispose();
+  }
+
+  Future<void> _showShakeTutorialIfNeeded() async {
+    final storage = sl<KVStorage>();
+    const String key = 'has_shown_shake_tutorial';
+    final bool hasShown = storage.read<bool>(key) ?? false;
+    if (!hasShown) {
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const ShakeTutorialDialog(),
+      );
+      await storage.write(key, true);
+    }
   }
 
   void _showReportDialog() {
