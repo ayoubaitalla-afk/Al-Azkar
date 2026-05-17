@@ -2,11 +2,11 @@ enum ZikrFilter {
   /// Source
   quran("سور", "القرآن", "Quran"),
 
+  muttaqunAlayh("متفق عليه", "متفق عليه", "Muttaqun Alayh"),
+
   sahihBukhari("بخار", "صحيح البخاري", "Sahih Bukhari"),
 
   sahihMuslim("مسلم", "صحيح مسلم", "Sahih Muslim"),
-
-  muttaqunAlayh("متفق عليه", "متفق عليه", "Muttaqun Alayh"),
 
   abuDawood("داو", "سنن أبي داود", "Sunan Abu Dawood"),
 

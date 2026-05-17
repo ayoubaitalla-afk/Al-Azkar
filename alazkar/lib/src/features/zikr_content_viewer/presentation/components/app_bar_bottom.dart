@@ -129,7 +129,7 @@ class ZikrContentViewerAppBarBottom extends StatelessWidget {
                           if (state.activeZikr!.sourceIndex.isNotEmpty) ...[
                             const Divider(height: 32),
                             Text(
-                              "رقم الذكر في المصدر",
+                              "رقم الذكر في طبعة دار ابن حزم",
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium
