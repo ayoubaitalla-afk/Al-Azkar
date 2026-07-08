@@ -1,15 +1,20 @@
 import 'package:alazkar/src/core/di/dependency_injection.dart';
+import 'package:alazkar/src/core/extension/extension_platform.dart';
+import 'package:alazkar/src/core/storage/kv_storage.dart';
 import 'package:alazkar/src/core/widgets/loading.dart';
 import 'package:alazkar/src/features/home/presentation/components/bookmark_title_button.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/app_bar_bottom.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/bottom_app_bar.dart';
+import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/shake_tutorial_dialog.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/zikr_item_card.dart';
+import 'package:alazkar/src/features/zikr_content_viewer/presentation/components/zikr_report_dialog.dart';
 import 'package:alazkar/src/features/zikr_content_viewer/presentation/controller/bloc/zikr_content_viewer_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:marquee/marquee.dart';
+import 'package:shake/shake.dart';
 
-class ZikrContentViewerScreen extends StatelessWidget {
+class ZikrContentViewerScreen extends StatefulWidget {
   static const String routeName = "ZikrContentViewer";
 
   final int zikrTitleId;
@@ -30,6 +35,87 @@ class ZikrContentViewerScreen extends StatelessWidget {
     );
   }
 
+  @override
+  State<ZikrContentViewerScreen> createState() =>
+      _ZikrContentViewerScreenState();
+}
+
+class _ZikrContentViewerScreenState extends State<ZikrContentViewerScreen> {
+  ShakeDetector? _shakeDetector;
+  bool _dialogOpen = false;
+  late final ZikrContentViewerBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = sl<ZikrContentViewerBloc>()
+      ..add(ZikrContentViewerStartEvent(widget.zikrTitleId,
+          zikrOrder: widget.zikrOrder));
+
+    if (PlatformExtension.isPhone) {
+      _shakeDetector = ShakeDetector.autoStart(
+        onPhoneShake: (event) {
+          _showReportDialog();
+        },
+      );
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showShakeTutorialIfNeeded();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _shakeDetector?.stopListening();
+    _bloc.close();
+    super.dispose();
+  }
+
+  Future<void> _showShakeTutorialIfNeeded() async {
+    final storage = sl<KVStorage>();
+    const String key = 'has_shown_shake_tutorial';
+    final bool hasShown = storage.read<bool>(key) ?? false;
+    if (!hasShown) {
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const ShakeTutorialDialog(),
+      );
+      await storage.write(key, true);
+    }
+  }
+
+  void _showReportDialog() {
+    if (!mounted || _dialogOpen) return;
+
+    final state = _bloc.state;
+    if (state is! ZikrContentViewerLoadedState) return;
+
+    final zikr = state.activeZikr;
+    final zikrTitle = state.zikrTitle;
+    if (zikr == null) return;
+
+    setState(() {
+      _dialogOpen = true;
+    });
+
+    showDialog(
+      context: context,
+      builder: (context) => ZikrReportDialog(
+        zikr: zikr,
+        zikrTitle: zikrTitle,
+      ),
+    ).then((_) {
+      if (mounted) {
+        setState(() {
+          _dialogOpen = false;
+        });
+      }
+    });
+  }
+
   double getTextWidth(String text, TextStyle style, BuildContext context) {
     final textSpan = TextSpan(text: text, style: style);
     final textPainter = TextPainter(
@@ -47,10 +133,10 @@ class ZikrContentViewerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ZikrContentViewerBloc>()
-        ..add(ZikrContentViewerStartEvent(zikrTitleId, zikrOrder: zikrOrder)),
+    return BlocProvider.value(
+      value: _bloc,
       child: BlocBuilder<ZikrContentViewerBloc, ZikrContentViewerState>(
+        bloc: _bloc,
         builder: (context, state) {
           if (state is! ZikrContentViewerLoadedState) {
             return const Loading();
@@ -99,7 +185,7 @@ class ZikrContentViewerScreen extends StatelessWidget {
               ),
             ),
             body: PageView.builder(
-              controller: context.read<ZikrContentViewerBloc>().pageController,
+              controller: _bloc.pageController,
               itemCount: state.azkar.length,
               itemBuilder: (context, index) {
                 final zikr = state.azkar[index];
