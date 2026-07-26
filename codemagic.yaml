@@ -59,6 +59,7 @@ workflows:
     triggering:
       events:
         - push
+        - tag
       branch:
         include_patterns:
           - main
