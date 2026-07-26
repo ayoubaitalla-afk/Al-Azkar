@@ -1,6 +1,7 @@
 import 'package:alazkar/src/core/manager/notification_manager.dart';
 import 'package:alazkar/src/core/models/notification_settings_model.dart';
 import 'package:alazkar/src/features/settings/data/notification_settings_repository.dart';
+import 'package:flutter/material.dart';
 
 class NotificationService {
   final NotificationManager _notificationManager;
@@ -11,8 +12,7 @@ class NotificationService {
   NotificationService({
     required NotificationManager notificationManager,
     required NotificationSettingsRepository settingsRepository,
-  })
-      : _notificationManager = notificationManager,
+  })  : _notificationManager = notificationManager,
         _settingsRepository = settingsRepository;
 
   Future<void> initialize() async {
@@ -77,8 +77,8 @@ class NotificationService {
 
   /// Add a new zhikr notification
   Future<void> addZhikrNotification(ZhikrNotificationModel zhikr) async {
-    final updated = List<ZhikrNotificationModel>.from(
-        _currentSettings.zhikrNotifications);
+    final updated =
+        List<ZhikrNotificationModel>.from(_currentSettings.zhikrNotifications);
     updated.add(zhikr);
     await updateSettings(
       _currentSettings.copyWith(zhikrNotifications: updated),
@@ -150,6 +150,45 @@ class NotificationService {
       );
     }
   }
+
+  /// Helper to toggle notifications by category
+  Future<void> _toggleCategoryNotification(
+      String category, bool enabled) async {
+    final index = _currentSettings.zhikrNotifications
+        .indexWhere((z) => z.zhikrCategory == category);
+    if (index >= 0) {
+      await toggleZhikrNotification(
+          _currentSettings.zhikrNotifications[index].id, enabled);
+    }
+  }
+
+  /// Helper to update time by category
+  Future<void> _updateCategoryTime(String category, String time) async {
+    final index = _currentSettings.zhikrNotifications
+        .indexWhere((z) => z.zhikrCategory == category);
+    if (index >= 0) {
+      await updateZhikrTime(
+          _currentSettings.zhikrNotifications[index].id, time);
+    }
+  }
+
+  Future<void> setMorningNotification(bool enabled) async =>
+      _toggleCategoryNotification('morning', enabled);
+  Future<void> setEveningNotification(bool enabled) async =>
+      _toggleCategoryNotification('evening', enabled);
+  Future<void> setMidnightNotification(bool enabled) async =>
+      _toggleCategoryNotification('midnight', enabled);
+
+  Future<void> setMorningTime(String time) async =>
+      _updateCategoryTime('morning', time);
+  Future<void> setEveningTime(String time) async =>
+      _updateCategoryTime('evening', time);
+  Future<void> setMidnightTime(String time) async =>
+      _updateCategoryTime('midnight', time);
+
+  Future<void> setSoundEnabled(bool enabled) async => toggleGlobalSound(enabled);
+  Future<void> setVibrationEnabled(bool enabled) async =>
+      toggleGlobalVibration(enabled);
 
   /// Get notifications for a specific category
   List<ZhikrNotificationModel> getNotificationsByCategory(String category) {

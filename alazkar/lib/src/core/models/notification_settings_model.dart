@@ -77,16 +77,16 @@ class ZhikrNotificationModel extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    zhikrId,
-    zhikrTitle,
-    zhikrCategory,
-    isEnabled,
-    notificationTime,
-    enableSound,
-    enableVibration,
-    customMessage,
-  ];
+        id,
+        zhikrId,
+        zhikrTitle,
+        zhikrCategory,
+        isEnabled,
+        notificationTime,
+        enableSound,
+        enableVibration,
+        customMessage,
+      ];
 }
 
 class NotificationSettingsModel extends Equatable {
@@ -102,14 +102,49 @@ class NotificationSettingsModel extends Equatable {
     this.globalVibration = true,
   });
 
+  bool get isEnabled => isGloballyEnabled;
+
+  bool get notifyMorning => _isCategoryEnabled('morning');
+  bool get notifyEvening => _isCategoryEnabled('evening');
+  bool get notifyMidnight => _isCategoryEnabled('midnight');
+
+  String get morningTime => _getCategoryTime('morning');
+  String get eveningTime => _getCategoryTime('evening');
+  String get midnightTime => _getCategoryTime('midnight');
+
+  bool get enableSound => globalSound;
+  bool get enableVibration => globalVibration;
+
+  bool _isCategoryEnabled(String category) {
+    try {
+      return zhikrNotifications
+          .firstWhere((z) => z.zhikrCategory == category)
+          .isEnabled;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  String _getCategoryTime(String category) {
+    try {
+      return zhikrNotifications
+          .firstWhere((z) => z.zhikrCategory == category)
+          .notificationTime;
+    } catch (_) {
+      return '07:00';
+    }
+  }
+
   NotificationSettingsModel copyWith({
     bool? isGloballyEnabled,
+    bool? isEnabled, // Support both names
     List<ZhikrNotificationModel>? zhikrNotifications,
     bool? globalSound,
     bool? globalVibration,
   }) {
     return NotificationSettingsModel(
-      isGloballyEnabled: isGloballyEnabled ?? this.isGloballyEnabled,
+      isGloballyEnabled:
+          isEnabled ?? isGloballyEnabled ?? this.isGloballyEnabled,
       zhikrNotifications: zhikrNotifications ?? this.zhikrNotifications,
       globalSound: globalSound ?? this.globalSound,
       globalVibration: globalVibration ?? this.globalVibration,
@@ -140,9 +175,9 @@ class NotificationSettingsModel extends Equatable {
 
   @override
   List<Object?> get props => [
-    isGloballyEnabled,
-    zhikrNotifications,
-    globalSound,
-    globalVibration,
-  ];
+        isGloballyEnabled,
+        zhikrNotifications,
+        globalSound,
+        globalVibration,
+      ];
 }

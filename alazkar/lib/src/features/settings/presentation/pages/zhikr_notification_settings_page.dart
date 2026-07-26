@@ -4,12 +4,7 @@ import 'package:alazkar/src/core/models/notification_settings_model.dart';
 import 'package:alazkar/src/features/settings/presentation/bloc/notification_settings_bloc.dart';
 
 class ZhikrNotificationSettingsPage extends StatefulWidget {
-  final List<ZhikrNotificationModel> availableZhikrs;
-
-  const ZhikrNotificationSettingsPage({
-    Key? key,
-    required this.availableZhikrs,
-  }) : super(key: key);
+  const ZhikrNotificationSettingsPage({super.key});
 
   @override
   State<ZhikrNotificationSettingsPage> createState() =>
@@ -40,7 +35,7 @@ class _ZhikrNotificationSettingsPageState
               child: CircularProgressIndicator(),
             );
           } else if (state is NotificationSettingsLoaded) {
-            return _buildNotificationSettings(context, state.settings);
+            return _buildSettingsList(context, state.settings);
           } else if (state is NotificationSettingsError) {
             return Center(
               child: Text('خطأ: ${state.message}'),
@@ -52,18 +47,18 @@ class _ZhikrNotificationSettingsPageState
     );
   }
 
-  Widget _buildNotificationSettings(
+  Widget _buildSettingsList(
     BuildContext context,
     NotificationSettingsModel settings,
   ) {
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        // Global Enable/Disable
+        // Global Toggle
         Card(
           child: SwitchListTile(
-            title: const Text('تفعيل جميع الإشعارات'),
-            subtitle: const Text('تلقي إشعارات الأذكار'),
+            title: const Text('تفعيل الإشعارات'),
+            subtitle: const Text('تفعيل أو تعطيل جميع الإشعارات'),
             value: settings.isGloballyEnabled,
             onChanged: (value) {
               context.read<NotificationSettingsBloc>().add(
@@ -76,7 +71,8 @@ class _ZhikrNotificationSettingsPageState
         ),
         const SizedBox(height: 16),
 
-        if (settings.isGloballyEnabled) ...[\n          // Global Sound and Vibration
+        if (settings.isGloballyEnabled) ...[
+          // Global Sound and Vibration
           Card(
             child: Column(
               children: [
@@ -107,248 +103,169 @@ class _ZhikrNotificationSettingsPageState
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
 
-          // Zhikr Notifications List
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'الأذكار',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+          const Text(
+            'تخصيص الأذكار',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
 
-          if (settings.zhikrNotifications.isEmpty)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(
-                  child: Column(
-                    children: const [
-                      Icon(Icons.notifications_off, size: 48),
-                      SizedBox(height: 8),
-                      Text('لم يتم إضافة أي أذكار للإشعارات'),
-                      Text('أضف أذكار من قائمة الأذكار الرئيسية'),
-                    ],
-                  ),
+          ...settings.zhikrNotifications.map((zhikr) {
+            return Card(
+              margin: const EdgeInsets.only(bottom: 8.0),
+              child: ListTile(
+                title: Text(zhikr.zhikrTitle),
+                subtitle: Text('وقت التنبيه: ${zhikr.notificationTime}'),
+                trailing: Switch(
+                  value: zhikr.isEnabled,
+                  onChanged: (value) {
+                    final updatedList =
+                        settings.zhikrNotifications.map((z) {
+                      if (z.id == zhikr.id) {
+                        return z.copyWith(isEnabled: value);
+                      }
+                      return z;
+                    }).toList();
+                    context.read<NotificationSettingsBloc>().add(
+                          UpdateNotificationSettings(
+                            settings.copyWith(
+                                zhikrNotifications: updatedList),
+                          ),
+                        );
+                  },
                 ),
+                onTap: () => _showEditDialog(context, zhikr, settings),
               ),
-            )
-          else
-            ...settings.zhikrNotifications.map((zhikr) {
-              return _buildZhikrNotificationCard(
-                context,
-                zhikr,
-                settings,
-              );
-            }).toList(),
+            );
+          }),
         ],
       ],
     );
   }
 
-  Widget _buildZhikrNotificationCard(
+  void _showEditDialog(
     BuildContext context,
     ZhikrNotificationModel zhikr,
     NotificationSettingsModel settings,
   ) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ExpansionTile(
-        leading: SizedBox(
-          width: 40,
-          child: Center(
-            child: Checkbox(
-              value: zhikr.isEnabled,
-              onChanged: (value) {
-                if (value != null) {
-                  final updated = zhikr.copyWith(isEnabled: value);
-                  final newZhikrs = settings.zhikrNotifications.map((z) {
-                    return z.id == zhikr.id ? updated : z;
-                  }).toList();
-                  context.read<NotificationSettingsBloc>().add(
-                        UpdateNotificationSettings(
-                          settings.copyWith(
-                              zhikrNotifications: newZhikrs),
-                        ),
-                      );
-                }
-              },
-            ),
-          ),
-        ),
-        title: Text(
-          zhikr.zhikrTitle,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: zhikr.isEnabled ? Colors.black : Colors.grey,
-          ),
-        ),
-        subtitle: Text(
-          'الوقت: ${zhikr.notificationTime}',
-          style: TextStyle(
-            color: zhikr.isEnabled ? Colors.grey[700] : Colors.grey,
-          ),
-        ),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                TimePickerTile(
-                  title: 'وقت التنبيه',
-                  initialTime: zhikr.notificationTime,
-                  onTimeChanged: (time) {
-                    final updated = zhikr.copyWith(notificationTime: time);
-                    final newZhikrs = settings.zhikrNotifications.map((z) {
-                      return z.id == zhikr.id ? updated : z;
-                    }).toList();
-                    context.read<NotificationSettingsBloc>().add(
-                          UpdateNotificationSettings(
-                            settings.copyWith(
-                                zhikrNotifications: newZhikrs),
-                          ),
-                        );
-                  },
-                ),
-                const Divider(),
-                TextFormField(
-                  initialValue: zhikr.customMessage,
-                  decoration: InputDecoration(
-                    labelText: 'رسالة مخصصة (اختياري)',
-                    hintText:
-                        'أترك فارغاً للرسالة الافتراضية: ${zhikr.zhikrTitle}',
-                    border: const OutlineInputBorder(),
+    showDialog(
+      context: context,
+      builder: (context) {
+        return ZhikrEditDialog(
+          zhikr: zhikr,
+          onSave: (updatedZhikr) {
+            final updatedList = settings.zhikrNotifications.map((z) {
+              if (z.id == updatedZhikr.id) {
+                return updatedZhikr;
+              }
+              return z;
+            }).toList();
+            context.read<NotificationSettingsBloc>().add(
+                  UpdateNotificationSettings(
+                    settings.copyWith(zhikrNotifications: updatedList),
                   ),
-                  maxLines: 2,
-                  onChanged: (value) {
-                    final updated = zhikr.copyWith(
-                      customMessage: value.isEmpty ? null : value,
-                    );
-                    final newZhikrs = settings.zhikrNotifications.map((z) {
-                      return z.id == zhikr.id ? updated : z;
-                    }).toList();
-                    context.read<NotificationSettingsBloc>().add(
-                          UpdateNotificationSettings(
-                            settings.copyWith(
-                                zhikrNotifications: newZhikrs),
-                          ),
-                        );
-                  },
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton.icon(
-                      onPressed: () {
-                        final newZhikrs = settings.zhikrNotifications
-                            .where((z) => z.id != zhikr.id)
-                            .toList();
-                        context.read<NotificationSettingsBloc>().add(
-                              UpdateNotificationSettings(
-                                settings.copyWith(
-                                    zhikrNotifications: newZhikrs),
-                              ),
-                            );
-                      },
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      label: const Text(
-                        'حذف',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                    TextButton.icon(
-                      onPressed: () {
-                        _showNotificationPreview(context, zhikr);
-                      },
-                      icon: const Icon(Icons.notifications_active,
-                          color: Colors.blue),
-                      label: const Text(
-                        'معاينة',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showNotificationPreview(
-    BuildContext context,
-    ZhikrNotificationModel zhikr,
-  ) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              zhikr.zhikrTitle,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              zhikr.customMessage ?? 'حان وقت: ${zhikr.zhikrTitle}',
-            ),
-          ],
-        ),
-        duration: const Duration(seconds: 3),
-      ),
+                );
+          },
+        );
+      },
     );
   }
 }
 
-class TimePickerTile extends StatelessWidget {
-  final String title;
-  final String initialTime;
-  final Function(String) onTimeChanged;
+class ZhikrEditDialog extends StatefulWidget {
+  final ZhikrNotificationModel zhikr;
+  final Function(ZhikrNotificationModel) onSave;
 
-  const TimePickerTile({
-    Key? key,
-    required this.title,
-    required this.initialTime,
-    required this.onTimeChanged,
-  }) : super(key: key);
+  const ZhikrEditDialog({
+    super.key,
+    required this.zhikr,
+    required this.onSave,
+  });
+
+  @override
+  State<ZhikrEditDialog> createState() => _ZhikrEditDialogState();
+}
+
+class _ZhikrEditDialogState extends State<ZhikrEditDialog> {
+  late String _time;
+  late TextEditingController _messageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _time = widget.zhikr.notificationTime;
+    _messageController =
+        TextEditingController(text: widget.zhikr.customMessage);
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      trailing: Text(
-        initialTime,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return AlertDialog(
+      title: Text('تعديل: ${widget.zhikr.zhikrTitle}'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('وقت التنبيه'),
+              trailing: Text(_time),
+              onTap: () async {
+                final parts = _time.split(':');
+                final hour = int.parse(parts[0]);
+                final minute = int.parse(parts[1]);
+
+                final picked = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay(hour: hour, minute: minute),
+                );
+
+                if (picked != null) {
+                  setState(() {
+                    _time =
+                        '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                  });
+                }
+              },
+            ),
+            TextField(
+              controller: _messageController,
+              decoration: const InputDecoration(
+                labelText: 'رسالة التنبيه (اختياري)',
+                hintText: 'مثال: حان وقت ذكر الله',
+              ),
+            ),
+          ],
+        ),
       ),
-      onTap: () async {
-        final parts = initialTime.split(':');
-        final initialHour = int.parse(parts[0]);
-        final initialMinute = int.parse(parts[1]);
-
-        final TimeOfDay? pickedTime = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay(hour: initialHour, minute: initialMinute),
-        );
-
-        if (pickedTime != null) {
-          final time =
-              '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
-          onTimeChanged(time);
-        }
-      },
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('إلغاء'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final updated = widget.zhikr.copyWith(
+              notificationTime: _time,
+              customMessage: _messageController.text.isEmpty
+                  ? null
+                  : _messageController.text,
+            );
+            widget.onSave(updated);
+            Navigator.pop(context);
+          },
+          child: const Text('حفظ'),
+        ),
+      ],
     );
   }
 }

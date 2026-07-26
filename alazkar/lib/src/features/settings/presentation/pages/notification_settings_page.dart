@@ -4,7 +4,7 @@ import 'package:alazkar/src/core/models/notification_settings_model.dart';
 import 'package:alazkar/src/features/settings/presentation/bloc/notification_settings_bloc.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
-  const NotificationSettingsPage({Key? key}) : super(key: key);
+  const NotificationSettingsPage({super.key});
 
   @override
   State<NotificationSettingsPage> createState() =>
@@ -69,7 +69,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         ),
         const SizedBox(height: 16),
 
-        if (settings.isEnabled) ...[\n          // Morning Notifications
+        if (settings.isEnabled) ...[
+          // Morning Notifications
           Card(
             child: Column(
               children: [
@@ -200,23 +201,23 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           // Information
           Card(
             color: Colors.blue.shade50,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+            child: const Padding(
+              padding: EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'ملاحظات مهمة:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    '• تأكد من تفعيل إذن الإشعارات في إعدادات الهاتف\\n'
-                    '• يجب أن يكون التطبيق مثبتاً على الهاتف\\n'
-                    '• قد تختلف أوقات الإشعارات حسب أداء الهاتف\\n'
+                  SizedBox(height: 8),
+                  Text(
+                    '• تأكد من تفعيل إذن الإشعارات في إعدادات الهاتف\n'
+                    '• يجب أن يكون التطبيق مثبتاً على الهاتف\n'
+                    '• قد تختلف أوقات الإشعارات حسب أداء الهاتف\n'
                     '• متوافق مع Xiaomi HyperOS 3.0.3 و Android 16',
                   ),
                 ],
@@ -235,11 +236,11 @@ class TimePickerTile extends StatelessWidget {
   final Function(String) onTimeChanged;
 
   const TimePickerTile({
-    Key? key,
+    super.key,
     required this.title,
     required this.initialTime,
     required this.onTimeChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
