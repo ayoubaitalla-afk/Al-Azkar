@@ -28,6 +28,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   fluttertoast: ^9.0.0
+  flutter_local_notifications: ^18.0.0
+  android_alarm_manager_plus: ^3.0.2
+  timezone: ^0.9.3
   get_it: ^8.2.0
   get_storage: ^2.1.1
   hive_ce: ^2.19.3
