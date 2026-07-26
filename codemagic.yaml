@@ -1,0 +1,198 @@
+workflows:
+  flutter-build-android:
+    name: Flutter Build Android APK & AAB
+    max_build_duration: 120
+    environment:
+      flutter: 3.32.0
+      xcode: latest
+      cocoapods: default
+      java: 11
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch:
+        include_patterns:
+          - main
+          - develop
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > android/local.properties
+      
+      - name: Get Flutter dependencies
+        script: flutter pub get
+      
+      - name: Analyze code quality
+        script: flutter analyze
+      
+      - name: Run unit tests
+        script: flutter test
+      
+      - name: Build APK (Release)
+        script: flutter build apk --release --split-per-abi
+      
+      - name: Build AAB (Release)
+        script: flutter build appbundle --release
+    
+    artifacts:
+      - build/app/outputs/flutter-apk/app-*.apk
+      - build/app/outputs/bundle/release/app-release.aab
+    
+    publishing:
+      email:
+        recipients:
+          - ayoub.aitalla@uit.ac.ma
+        notify:
+          success: true
+          failure: true
+      slack:
+        channel: '#al-azkar-builds'
+        notify_on_build_start: true
+
+  flutter-build-android-huawei:
+    name: Flutter Build Android for Huawei (HyperOS)
+    max_build_duration: 120
+    environment:
+      flutter: 3.32.0
+      java: 11
+    triggering:
+      events:
+        - push
+      branch:
+        include_patterns:
+          - main
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > android/local.properties
+      
+      - name: Get Flutter dependencies
+        script: flutter pub get
+      
+      - name: Build APK optimized for HyperOS
+        script: |
+          flutter build apk --release \
+            --dart-define=ENABLE_NOTIFICATION_OPTIMIZATIONS=true \
+            --split-per-abi
+      
+      - name: Build AAB optimized for HyperOS
+        script: |
+          flutter build appbundle --release \
+            --dart-define=ENABLE_NOTIFICATION_OPTIMIZATIONS=true
+    
+    artifacts:
+      - build/app/outputs/flutter-apk/app-*.apk
+      - build/app/outputs/bundle/release/app-release.aab
+    
+    publishing:
+      email:
+        recipients:
+          - ayoub.aitalla@uit.ac.ma
+        notify:
+          success: true
+          failure: true
+
+  flutter-build-ios:
+    name: Flutter Build iOS IPA
+    max_build_duration: 120
+    environment:
+      flutter: 3.32.0
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch:
+        include_patterns:
+          - main
+          - develop
+    scripts:
+      - name: Get Flutter dependencies
+        script: flutter pub get
+      
+      - name: Analyze code quality
+        script: flutter analyze
+      
+      - name: Run unit tests
+        script: flutter test
+      
+      - name: Build iOS IPA
+        script: |
+          flutter build ipa --release \
+            --export-options-template=ios/Runner.xcodeproj/project.pbxproj
+    
+    artifacts:
+      - build/ios/ipa/*.ipa
+    
+    publishing:
+      email:
+        recipients:
+          - ayoub.aitalla@uit.ac.ma
+        notify:
+          success: true
+          failure: true
+
+  flutter-build-web:
+    name: Flutter Build Web
+    max_build_duration: 60
+    environment:
+      flutter: 3.32.0
+    triggering:
+      events:
+        - push
+      branch:
+        include_patterns:
+          - main
+    scripts:
+      - name: Get Flutter dependencies
+        script: flutter pub get
+      
+      - name: Build Web Release
+        script: flutter build web --release --dart-define=FLUTTER_WEB_USE_SKIA=true
+    
+    artifacts:
+      - build/web/**
+    
+    publishing:
+      email:
+        recipients:
+          - ayoub.aitalla@uit.ac.ma
+        notify:
+          success: true
+          failure: true
+
+  flutter-beta-build:
+    name: Flutter Beta Build (Testing)
+    max_build_duration: 120
+    environment:
+      flutter: 3.32.0
+      java: 11
+    triggering:
+      events:
+        - push
+      branch:
+        include_patterns:
+          - develop
+    scripts:
+      - name: Get Flutter dependencies
+        script: flutter pub get
+      
+      - name: Build APK (Debug)
+        script: flutter build apk --debug
+      
+      - name: Build AAB (Debug)
+        script: flutter build appbundle --debug
+    
+    artifacts:
+      - build/app/outputs/flutter-apk/app-debug.apk
+      - build/app/outputs/bundle/debug/app-debug.aab
+    
+    publishing:
+      email:
+        recipients:
+          - ayoub.aitalla@uit.ac.ma
+        notify:
+          success: true
+          failure: true
