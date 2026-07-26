@@ -1,97 +1,148 @@
 import 'package:equatable/equatable.dart';
 
-class NotificationSettingsModel extends Equatable {
+class ZhikrNotificationModel extends Equatable {
+  final int id;
+  final String zhikrId; // Unique identifier for the zhikr
+  final String zhikrTitle; // Title of the zhikr (e.g., "سبحان الله")
+  final String zhikrCategory; // Category (morning, evening, etc.)
   final bool isEnabled;
-  final bool notifyMorning;
-  final bool notifyEvening;
-  final bool notifyMidnight;
-  final String morningTime; // HH:mm format
-  final String eveningTime; // HH:mm format
-  final String midnightTime; // HH:mm format
+  final String notificationTime; // HH:mm format
   final bool enableSound;
   final bool enableVibration;
-  final int notificationChannel; // 1: all, 2: morning only, 3: evening only
+  final String? customMessage; // Custom notification message
 
-  const NotificationSettingsModel({
-    this.isEnabled = false,
-    this.notifyMorning = true,
-    this.notifyEvening = true,
-    this.notifyMidnight = false,
-    this.morningTime = '07:00',
-    this.eveningTime = '18:00',
-    this.midnightTime = '00:00',
+  const ZhikrNotificationModel({
+    required this.id,
+    required this.zhikrId,
+    required this.zhikrTitle,
+    required this.zhikrCategory,
+    this.isEnabled = true,
+    this.notificationTime = '07:00',
     this.enableSound = true,
     this.enableVibration = true,
-    this.notificationChannel = 1,
+    this.customMessage,
   });
 
-  NotificationSettingsModel copyWith({
+  ZhikrNotificationModel copyWith({
+    int? id,
+    String? zhikrId,
+    String? zhikrTitle,
+    String? zhikrCategory,
     bool? isEnabled,
-    bool? notifyMorning,
-    bool? notifyEvening,
-    bool? notifyMidnight,
-    String? morningTime,
-    String? eveningTime,
-    String? midnightTime,
+    String? notificationTime,
     bool? enableSound,
     bool? enableVibration,
-    int? notificationChannel,
+    String? customMessage,
   }) {
-    return NotificationSettingsModel(
+    return ZhikrNotificationModel(
+      id: id ?? this.id,
+      zhikrId: zhikrId ?? this.zhikrId,
+      zhikrTitle: zhikrTitle ?? this.zhikrTitle,
+      zhikrCategory: zhikrCategory ?? this.zhikrCategory,
       isEnabled: isEnabled ?? this.isEnabled,
-      notifyMorning: notifyMorning ?? this.notifyMorning,
-      notifyEvening: notifyEvening ?? this.notifyEvening,
-      notifyMidnight: notifyMidnight ?? this.notifyMidnight,
-      morningTime: morningTime ?? this.morningTime,
-      eveningTime: eveningTime ?? this.eveningTime,
-      midnightTime: midnightTime ?? this.midnightTime,
+      notificationTime: notificationTime ?? this.notificationTime,
       enableSound: enableSound ?? this.enableSound,
       enableVibration: enableVibration ?? this.enableVibration,
-      notificationChannel: notificationChannel ?? this.notificationChannel,
+      customMessage: customMessage ?? this.customMessage,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
+      'zhikrId': zhikrId,
+      'zhikrTitle': zhikrTitle,
+      'zhikrCategory': zhikrCategory,
       'isEnabled': isEnabled,
-      'notifyMorning': notifyMorning,
-      'notifyEvening': notifyEvening,
-      'notifyMidnight': notifyMidnight,
-      'morningTime': morningTime,
-      'eveningTime': eveningTime,
-      'midnightTime': midnightTime,
+      'notificationTime': notificationTime,
       'enableSound': enableSound,
       'enableVibration': enableVibration,
-      'notificationChannel': notificationChannel,
+      'customMessage': customMessage,
     };
   }
 
-  factory NotificationSettingsModel.fromMap(Map<String, dynamic> map) {
-    return NotificationSettingsModel(
-      isEnabled: map['isEnabled'] as bool? ?? false,
-      notifyMorning: map['notifyMorning'] as bool? ?? true,
-      notifyEvening: map['notifyEvening'] as bool? ?? true,
-      notifyMidnight: map['notifyMidnight'] as bool? ?? false,
-      morningTime: map['morningTime'] as String? ?? '07:00',
-      eveningTime: map['eveningTime'] as String? ?? '18:00',
-      midnightTime: map['midnightTime'] as String? ?? '00:00',
+  factory ZhikrNotificationModel.fromMap(Map<String, dynamic> map) {
+    return ZhikrNotificationModel(
+      id: map['id'] as int,
+      zhikrId: map['zhikrId'] as String,
+      zhikrTitle: map['zhikrTitle'] as String,
+      zhikrCategory: map['zhikrCategory'] as String,
+      isEnabled: map['isEnabled'] as bool? ?? true,
+      notificationTime: map['notificationTime'] as String? ?? '07:00',
       enableSound: map['enableSound'] as bool? ?? true,
       enableVibration: map['enableVibration'] as bool? ?? true,
-      notificationChannel: map['notificationChannel'] as int? ?? 1,
+      customMessage: map['customMessage'] as String?,
     );
   }
 
   @override
   List<Object?> get props => [
+    id,
+    zhikrId,
+    zhikrTitle,
+    zhikrCategory,
     isEnabled,
-    notifyMorning,
-    notifyEvening,
-    notifyMidnight,
-    morningTime,
-    eveningTime,
-    midnightTime,
+    notificationTime,
     enableSound,
     enableVibration,
-    notificationChannel,
+    customMessage,
+  ];
+}
+
+class NotificationSettingsModel extends Equatable {
+  final bool isGloballyEnabled;
+  final List<ZhikrNotificationModel> zhikrNotifications;
+  final bool globalSound;
+  final bool globalVibration;
+
+  const NotificationSettingsModel({
+    this.isGloballyEnabled = false,
+    this.zhikrNotifications = const [],
+    this.globalSound = true,
+    this.globalVibration = true,
+  });
+
+  NotificationSettingsModel copyWith({
+    bool? isGloballyEnabled,
+    List<ZhikrNotificationModel>? zhikrNotifications,
+    bool? globalSound,
+    bool? globalVibration,
+  }) {
+    return NotificationSettingsModel(
+      isGloballyEnabled: isGloballyEnabled ?? this.isGloballyEnabled,
+      zhikrNotifications: zhikrNotifications ?? this.zhikrNotifications,
+      globalSound: globalSound ?? this.globalSound,
+      globalVibration: globalVibration ?? this.globalVibration,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'isGloballyEnabled': isGloballyEnabled,
+      'zhikrNotifications': zhikrNotifications.map((z) => z.toMap()).toList(),
+      'globalSound': globalSound,
+      'globalVibration': globalVibration,
+    };
+  }
+
+  factory NotificationSettingsModel.fromMap(Map<String, dynamic> map) {
+    return NotificationSettingsModel(
+      isGloballyEnabled: map['isGloballyEnabled'] as bool? ?? false,
+      zhikrNotifications: (map['zhikrNotifications'] as List<dynamic>?)
+              ?.map((z) => ZhikrNotificationModel.fromMap(
+                  Map<String, dynamic>.from(z as Map)))
+              .toList() ??
+          [],
+      globalSound: map['globalSound'] as bool? ?? true,
+      globalVibration: map['globalVibration'] as bool? ?? true,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    isGloballyEnabled,
+    zhikrNotifications,
+    globalSound,
+    globalVibration,
   ];
 }
