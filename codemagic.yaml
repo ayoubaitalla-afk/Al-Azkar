@@ -19,26 +19,36 @@ workflows:
     scripts:
       - name: Set up local.properties
         script: |
-          echo "flutter.sdk=$HOME/programs/flutter" > android/local.properties
+          echo "flutter.sdk=$HOME/programs/flutter" > alazkar/android/local.properties
       
       - name: Get Flutter dependencies
-        script: flutter pub get
+        script: |
+          cd alazkar
+          flutter pub get
       
       - name: Analyze code quality
-        script: flutter analyze
+        script: |
+          cd alazkar
+          flutter analyze
       
       - name: Run unit tests
-        script: flutter test
+        script: |
+          cd alazkar
+          flutter test
       
       - name: Build APK (Release)
-        script: flutter build apk --release --split-per-abi
+        script: |
+          cd alazkar
+          flutter build apk --release --split-per-abi
       
       - name: Build AAB (Release)
-        script: flutter build appbundle --release
+        script: |
+          cd alazkar
+          flutter build appbundle --release
     
     artifacts:
-      - build/app/outputs/flutter-apk/app-*.apk
-      - build/app/outputs/bundle/release/app-release.aab
+      - alazkar/build/app/outputs/flutter-apk/app-*.apk
+      - alazkar/build/app/outputs/bundle/release/app-release.aab
     
     publishing:
       email:
@@ -67,25 +77,29 @@ workflows:
     scripts:
       - name: Set up local.properties
         script: |
-          echo "flutter.sdk=$HOME/programs/flutter" > android/local.properties
+          echo "flutter.sdk=$HOME/programs/flutter" > alazkar/android/local.properties
       
       - name: Get Flutter dependencies
-        script: flutter pub get
+        script: |
+          cd alazkar
+          flutter pub get
       
       - name: Build APK optimized for HyperOS
         script: |
+          cd alazkar
           flutter build apk --release \
             --dart-define=ENABLE_NOTIFICATION_OPTIMIZATIONS=true \
             --split-per-abi
       
       - name: Build AAB optimized for HyperOS
         script: |
+          cd alazkar
           flutter build appbundle --release \
             --dart-define=ENABLE_NOTIFICATION_OPTIMIZATIONS=true
     
     artifacts:
-      - build/app/outputs/flutter-apk/app-*.apk
-      - build/app/outputs/bundle/release/app-release.aab
+      - alazkar/build/app/outputs/flutter-apk/app-*.apk
+      - alazkar/build/app/outputs/bundle/release/app-release.aab
     
     publishing:
       email:
@@ -113,21 +127,28 @@ workflows:
           include: true
     scripts:
       - name: Get Flutter dependencies
-        script: flutter pub get
+        script: |
+          cd alazkar
+          flutter pub get
       
       - name: Analyze code quality
-        script: flutter analyze
+        script: |
+          cd alazkar
+          flutter analyze
       
       - name: Run unit tests
-        script: flutter test
+        script: |
+          cd alazkar
+          flutter test
       
       - name: Build iOS IPA
         script: |
+          cd alazkar
           flutter build ipa --release \
             --export-options-template=ios/Runner.xcodeproj/project.pbxproj
     
     artifacts:
-      - build/ios/ipa/*.ipa
+      - alazkar/build/ios/ipa/*.ipa
     
     publishing:
       email:
@@ -150,13 +171,17 @@ workflows:
           include: true
     scripts:
       - name: Get Flutter dependencies
-        script: flutter pub get
+        script: |
+          cd alazkar
+          flutter pub get
       
       - name: Build Web Release
-        script: flutter build web --release --dart-define=FLUTTER_WEB_USE_SKIA=true
+        script: |
+          cd alazkar
+          flutter build web --release --dart-define=FLUTTER_WEB_USE_SKIA=true
     
     artifacts:
-      - build/web/**
+      - alazkar/build/web/**
     
     publishing:
       email:
@@ -180,17 +205,23 @@ workflows:
           include: true
     scripts:
       - name: Get Flutter dependencies
-        script: flutter pub get
+        script: |
+          cd alazkar
+          flutter pub get
       
       - name: Build APK (Debug)
-        script: flutter build apk --debug
+        script: |
+          cd alazkar
+          flutter build apk --debug
       
       - name: Build AAB (Debug)
-        script: flutter build appbundle --debug
+        script: |
+          cd alazkar
+          flutter build appbundle --debug
     
     artifacts:
-      - build/app/outputs/flutter-apk/app-debug.apk
-      - build/app/outputs/bundle/debug/app-debug.aab
+      - alazkar/build/app/outputs/flutter-apk/app-debug.apk
+      - alazkar/build/app/outputs/bundle/debug/app-debug.aab
     
     publishing:
       email:
