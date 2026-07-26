@@ -11,10 +11,11 @@ workflows:
       events:
         - push
         - pull_request
-      branch:
-        include_patterns:
-          - main
-          - develop
+      branch_patterns:
+        - pattern: main
+          include: true
+        - pattern: develop
+          include: true
     scripts:
       - name: Set up local.properties
         script: |
@@ -60,9 +61,9 @@ workflows:
       events:
         - push
         - tag
-      branch:
-        include_patterns:
-          - main
+      branch_patterns:
+        - pattern: main
+          include: true
     scripts:
       - name: Set up local.properties
         script: |
@@ -105,10 +106,11 @@ workflows:
       events:
         - push
         - pull_request
-      branch:
-        include_patterns:
-          - main
-          - develop
+      branch_patterns:
+        - pattern: main
+          include: true
+        - pattern: develop
+          include: true
     scripts:
       - name: Get Flutter dependencies
         script: flutter pub get
@@ -143,9 +145,9 @@ workflows:
     triggering:
       events:
         - push
-      branch:
-        include_patterns:
-          - main
+      branch_patterns:
+        - pattern: main
+          include: true
     scripts:
       - name: Get Flutter dependencies
         script: flutter pub get
@@ -173,9 +175,9 @@ workflows:
     triggering:
       events:
         - push
-      branch:
-        include_patterns:
-          - develop
+      branch_patterns:
+        - pattern: develop
+          include: true
     scripts:
       - name: Get Flutter dependencies
         script: flutter pub get
