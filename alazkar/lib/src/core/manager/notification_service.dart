@@ -65,7 +65,7 @@ class NotificationService {
   }) async {
     if (!_currentSettings.isGloballyEnabled || !zhikr.isEnabled) return;
 
-    int notificationId =
+    final notificationId =
         DateTime.now().millisecondsSinceEpoch.remainder(100000);
     await _notificationManager.showZhikrNotification(
       id: notificationId,
@@ -172,22 +172,22 @@ class NotificationService {
     }
   }
 
-  Future<void> setMorningNotification(bool enabled) async =>
+  Future<void> setMorningNotification(bool enabled) =>
       _toggleCategoryNotification('morning', enabled);
-  Future<void> setEveningNotification(bool enabled) async =>
+  Future<void> setEveningNotification(bool enabled) =>
       _toggleCategoryNotification('evening', enabled);
-  Future<void> setMidnightNotification(bool enabled) async =>
+  Future<void> setMidnightNotification(bool enabled) =>
       _toggleCategoryNotification('midnight', enabled);
 
-  Future<void> setMorningTime(String time) async =>
+  Future<void> setMorningTime(String time) =>
       _updateCategoryTime('morning', time);
-  Future<void> setEveningTime(String time) async =>
+  Future<void> setEveningTime(String time) =>
       _updateCategoryTime('evening', time);
-  Future<void> setMidnightTime(String time) async =>
+  Future<void> setMidnightTime(String time) =>
       _updateCategoryTime('midnight', time);
 
-  Future<void> setSoundEnabled(bool enabled) async => toggleGlobalSound(enabled);
-  Future<void> setVibrationEnabled(bool enabled) async =>
+  Future<void> setSoundEnabled(bool enabled) => toggleGlobalSound(enabled);
+  Future<void> setVibrationEnabled(bool enabled) =>
       toggleGlobalVibration(enabled);
 
   /// Get notifications for a specific category
@@ -205,8 +205,8 @@ class NotificationService {
   }
 
   /// Get pending notifications
-  Future<List<dynamic>> getPendingNotifications() async {
-    return await _notificationManager.getPendingNotifications();
+  Future<List<dynamic>> getPendingNotifications() {
+    return _notificationManager.getPendingNotifications();
   }
 
   /// Cancel a specific notification

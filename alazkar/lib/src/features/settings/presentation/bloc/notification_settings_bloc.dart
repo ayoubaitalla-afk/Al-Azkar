@@ -1,6 +1,6 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:alazkar/src/core/models/notification_settings_model.dart';
 import 'package:alazkar/src/core/manager/notification_service.dart';
+import 'package:alazkar/src/core/models/notification_settings_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 part 'notification_settings_event.dart';
