@@ -9,12 +9,10 @@ class NotificationSettingsRepository {
   Future<NotificationSettingsModel> loadSettings() async {
     final String? data = _storage.read(_key);
     if (data == null) {
-      return const NotificationSettingsModel(
-        isGloballyEnabled: false,
-        zhikrNotifications: [],
-      );
+      return const NotificationSettingsModel();
     }
-    return NotificationSettingsModel.fromMap(json.decode(data));
+    return NotificationSettingsModel.fromMap(
+        json.decode(data) as Map<String, dynamic>);
   }
 
   Future<void> saveSettings(NotificationSettingsModel settings) async {

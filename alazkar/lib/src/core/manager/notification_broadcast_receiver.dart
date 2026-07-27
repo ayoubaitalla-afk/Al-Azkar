@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:alazkar/src/core/manager/notification_manager.dart';
 
 class NotificationBroadcastReceiver {
@@ -7,6 +8,6 @@ class NotificationBroadcastReceiver {
     await notificationManager.initialize();
     
     // This is called when the notification is received
-    print('Notification received via broadcast receiver');
+    log('Notification received via broadcast receiver');
   }
 }
