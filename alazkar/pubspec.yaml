@@ -26,9 +26,9 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter_colorpicker: ^1.1.0
   flutter_email_sender: ^8.0.0
+  flutter_local_notifications: ^18.0.0
   flutter_localizations:
     sdk: flutter
-  flutter_local_notifications: ^18.0.0
   fluttertoast: ^9.0.0
   get_it: ^8.2.0
   get_storage: ^2.1.1
