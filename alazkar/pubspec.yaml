@@ -10,7 +10,7 @@ environment:
   flutter: "3.32.0"
 
 dependencies:
-  android_alarm_manager_plus: ^4.0.3
+  android_alarm_manager_plus: 4.0.3
   auto_size_text: ^3.0.0
   bloc: ^9.0.1
   bot_toast: ^4.1.3
